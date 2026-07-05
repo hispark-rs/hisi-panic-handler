@@ -1,0 +1,17 @@
+[package]
+name = "hisi-panic-handler"
+version = "0.1.0"
+edition = "2024"
+description = "Panic handlers for HiSilicon RISC-V chips (WS63 / BS2X)"
+license = "MIT"
+repository = "https://github.com/hispark-rs/hisi-panic-handler"
+readme = "README.md"
+keywords = ["embedded", "panic-handler", "riscv", "hisilicon"]
+categories = ["embedded", "no-std"]
+
+[dependencies]
+
+[features]
+default = ["panic-halt"]
+panic-halt = []
+panic-uart0 = []
