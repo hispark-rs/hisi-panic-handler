@@ -5,7 +5,7 @@
 //! Does NOT reconfigure UART0 — if the earlier boot stage did not set it
 //! up, this handler will silently spin on `tx_fifo_full`.
 
-use core::fmt::Write;
+use core::fmt::Write as _;
 use core::panic::PanicInfo;
 
 /// Write bytes to UART0 TX, blocking on FIFO not full.
@@ -29,11 +29,11 @@ pub fn panic_handler(info: &PanicInfo) -> ! {
 
     if let Some(msg) = info.message() {
         let mut w = UartWriter;
-        let _ = write(&mut w, *msg);
+        let _ = core::fmt::write(&mut w, *msg);
     }
     if let Some(loc) = info.location() {
         let mut w = UartWriter;
-        let _ = write(&mut w, format_args!(" @ {}:{}", loc.file(), loc.line()));
+        let _ = core::fmt::write(&mut w, format_args!(" @ {}:{}", loc.file(), loc.line()));
     }
     write_uart0(b"\r\n");
 
@@ -47,7 +47,7 @@ pub fn panic_handler(info: &PanicInfo) -> ! {
 
 struct UartWriter;
 
-impl Write for UartWriter {
+impl core::fmt::Write for UartWriter {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         write_uart0(s.as_bytes());
         Ok(())
