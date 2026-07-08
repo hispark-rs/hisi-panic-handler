@@ -9,7 +9,7 @@ pattern. The panic output channel is an application decision, not a HAL concern.
 
 | Feature | Behaviour |
 |---------|-----------|
-| `panic-halt` (default) | Silent CPU halt |
+| `panic-halt` (default) | Silent CPU halt when no other backend is selected |
 | `panic-uart0` | Write message + file:line to UART0, then halt |
 
 ## Usage

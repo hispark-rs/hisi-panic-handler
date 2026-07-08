@@ -4,7 +4,7 @@
 //!
 //! | Feature | Behaviour |
 //! |---------|-----------|
-//! | `panic-halt` (default) | Silent CPU halt |
+//! | `panic-halt` (default) | Silent CPU halt when no other backend is selected |
 //! | `panic-uart0` | Write message to UART0 DATA, then halt |
 //!
 //! # Usage
@@ -15,7 +15,7 @@
 
 #![no_std]
 
-#[cfg(feature = "panic-halt")]
+#[cfg(all(feature = "panic-halt", not(feature = "panic-uart0")))]
 mod halt;
 #[cfg(feature = "panic-uart0")]
 mod uart0;
