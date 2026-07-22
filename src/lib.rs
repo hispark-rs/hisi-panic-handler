@@ -1,4 +1,4 @@
-//! Panic handlers for HiSilicon RISC-V chips.
+//! Panic handlers for HiSilicon WS63 bare-metal Rust firmware.
 //!
 //! # Features
 //!

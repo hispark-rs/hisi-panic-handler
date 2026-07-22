@@ -10,14 +10,16 @@ use core::panic::PanicInfo;
 /// Write bytes to UART0 TX, blocking on FIFO not full.
 /// UART0 base = 0x4401_0000, DATA = +0x04, FIFO_STATUS = +0x44.
 pub fn write_uart0(msg: &[u8]) {
-    const DATA: *mut u16 = 0x4401_0004 as *mut u16;
-    const ST: *const u16 = 0x4401_0044 as *const u16;
+    // The WS63 UART register block is 32-bit wide even though many fields use
+    // only the low 8 or 16 bits.
+    const DATA: *mut u32 = 0x4401_0004 as *mut u32;
+    const ST: *const u32 = 0x4401_0044 as *const u32;
     for &b in msg {
         unsafe {
             while core::ptr::read_volatile(ST) & 0x01 != 0 {
                 core::hint::spin_loop();
             }
-            core::ptr::write_volatile(DATA, b as u16);
+            core::ptr::write_volatile(DATA, u32::from(b));
         }
     }
 }

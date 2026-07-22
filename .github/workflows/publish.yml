@@ -1,0 +1,44 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (package + check, no upload)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-07-09
+          components: rust-src
+      - name: Lockfile preflight
+        run: |
+          set -euo pipefail
+          cargo generate-lockfile --locked
+          git ls-files --error-unmatch Cargo.lock >/dev/null
+          git diff --exit-code -- Cargo.lock
+      - name: Publish crate
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          DRY: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+        run: |
+          set -euo pipefail
+          cargo package --locked
+          if cargo publish --locked $DRY 2>&1 | tee /tmp/publish.log; then
+            :
+          elif grep -qiE 'already (exists|been uploaded|uploaded)|is already uploaded' /tmp/publish.log; then
+            echo "This version is already on crates.io; skipping."
+          else
+            exit 1
+          fi

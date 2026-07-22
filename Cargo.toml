@@ -2,7 +2,7 @@
 name = "hisi-panic-handler"
 version = "0.1.0"
 edition = "2024"
-description = "Panic handlers for HiSilicon RISC-V chips (WS63 / BS2X)"
+description = "Panic handlers for HiSilicon WS63 bare-metal Rust firmware"
 license = "MIT"
 repository = "https://github.com/hispark-rs/hisi-panic-handler"
 readme = "README.md"
